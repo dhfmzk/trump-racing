@@ -11,6 +11,12 @@ const SPEED_INTERVALS: Record<SpeedMode, number> = {
   instant: 120,
 }
 
+const REVEAL_INTERVALS: Record<SpeedMode, number> = {
+  normal: 900,
+  fast: 320,
+  instant: 120,
+}
+
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, DEFAULT_SEGMENTS, setupGame)
   const [autoPlay, setAutoPlay] = useState(false)
@@ -23,9 +29,12 @@ export default function App() {
       return undefined
     }
 
-    const timer = window.setInterval(() => {
-      dispatch({ type: 'play_turn' })
-    }, SPEED_INTERVALS[speed])
+    const timer = window.setInterval(
+      () => {
+        dispatch({ type: state.phase === 'revealing' ? 'resolve_reveal' : 'play_turn' })
+      },
+      state.phase === 'revealing' ? REVEAL_INTERVALS[speed] : SPEED_INTERVALS[speed],
+    )
 
     return () => window.clearInterval(timer)
   }, [autoPlay, speed, state.phase])
@@ -55,11 +64,17 @@ export default function App() {
       return
     }
 
-    if (state.phase === 'ready') {
-      dispatch({ type: 'start' })
+    if (autoPlay) {
+      setAutoPlay(false)
+      return
     }
 
-    setAutoPlay((current) => !current)
+    if (state.phase === 'ready') {
+      dispatch({ type: 'start' })
+      dispatch({ type: 'play_turn' })
+    }
+
+    setAutoPlay(true)
   }
 
   function handlePrimaryAction() {
@@ -74,6 +89,11 @@ export default function App() {
       return
     }
 
+    if (state.phase === 'revealing') {
+      dispatch({ type: 'resolve_reveal' })
+      return
+    }
+
     resetRound({ advanceRound: true })
   }
 
@@ -84,6 +104,10 @@ export default function App() {
 
     if (state.phase === 'playing') {
       return '다음 턴'
+    }
+
+    if (state.phase === 'revealing') {
+      return '체크포인트 공개'
     }
 
     return '다음 라운드'

@@ -32,7 +32,7 @@ export type TurnLog = {
   reveals: RevealEvent[]
 }
 
-export type GamePhase = 'ready' | 'playing' | 'finished'
+export type GamePhase = 'ready' | 'playing' | 'revealing' | 'finished'
 
 export type GameState = {
   phase: GamePhase
@@ -52,3 +52,4 @@ export type GameAction =
   | { type: 'reset'; segmentCount?: number }
   | { type: 'start' }
   | { type: 'play_turn' }
+  | { type: 'resolve_reveal' }
