@@ -28,6 +28,18 @@ npm run dev
 npm run build
 ```
 
+## Deployment
+
+GitHub Pages deployment is configured through GitHub Actions.
+
+- Push to `main`
+- Open the repository `Settings > Pages`
+- Set the source to `GitHub Actions` if it is not already selected
+
+The published site will be available at:
+
+`https://dhfmzk.github.io/trump-racing/`
+
 ## Current Scope
 
 This repository currently focuses on the first playable version of the game.
